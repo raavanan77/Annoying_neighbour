@@ -4,58 +4,64 @@ import tensorflow as tf
 from tensorflow.keras import models, layers
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
-import joblib  # To save the scaler
+import joblib
 
-# Step 1: Load the data from CSV file
+# Load data
 df = pd.read_csv('channel_data_with_interference.csv')
 
-# Step 2: Handle infinite values in 'Interference' column
+print(df.shape)
+
+
 df['Interference'] = pd.to_numeric(df['Interference'], errors='coerce')
 df['Interference'].fillna(df['Interference'].median(), inplace=True)
+df['Interference'] = np.sqrt(np.log1p(df['Interference']))
 
-# Step 3: Apply a combined log + square root transformation to the target ('Interference')
-df['Interference'] = np.sqrt(np.log1p(df['Interference']))  # log(1 + Interference) and sqrt
+# Define feature columns
+target_col = 'Interference'
+feature_cols = [col for col in df.columns if col != target_col]  # Auto-select all except target
 
-# Step 4: Split the data into features (X) and target (y)
-X = df.drop(columns=['Interference'])
-y = df['Interference']
 
-# Step 5: Normalize the features using StandardScaler
+# Normalize features
 scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)  # Fit the scaler on training data
-
-# Save the scaler for features (X)
+X_scaled = scaler.fit_transform(df[feature_cols])
 joblib.dump(scaler, 'scaler.pkl')
 
-# Normalize the target variable using MinMaxScaler after log + sqrt transformation
 y_scaler = MinMaxScaler()
-y_scaled = y_scaler.fit_transform(y.values.reshape(-1, 1)).flatten()
-
-# Save the scaler for target (y)
+y_scaled = y_scaler.fit_transform(df[target_col].values.reshape(-1, 1)).flatten()
 joblib.dump(y_scaler, 'y_scaler.pkl')
 
-# Step 6: Split the data into training and test sets (80% training, 20% testing)
-X_train, X_test, y_train, y_test = train_test_split(X_scaled, y_scaled, test_size=0.2, random_state=42)
+# Convert to 3D (sliding window)
+time_steps = 10  # Use last 10 readings
+X_list, y_list = [], []
+for i in range(len(X_scaled) - time_steps):
+    X_list.append(X_scaled[i:i + time_steps])
+    y_list.append(y_scaled[i + time_steps])
 
-# Step 7: Build a more complex neural network model using Keras
+X_3D = np.array(X_list)
+y_3D = np.array(y_list)
+
+print(f"X_3D shape: {X_3D.shape}, y_3D shape: {y_3D.shape}")
+
+
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X_3D, y_3D, test_size=0.2, random_state=42)
+
+# Build LSTM model
 model = models.Sequential([
-    layers.Dense(128, activation='relu', input_dim=X_train.shape[1], kernel_regularizer=tf.keras.regularizers.l2(0.01)),
-    layers.Dense(64, activation='relu', kernel_regularizer=tf.keras.regularizers.l2(0.01)),
-    layers.Dense(32, activation='relu', kernel_regularizer=tf.keras.regularizers.l2(0.01)),
-    layers.Dense(1)  # For regression (predicting continuous values)
+    layers.LSTM(128, activation='relu', return_sequences=True, input_shape=(time_steps, X_train.shape[2])),
+    layers.LSTM(64, activation='relu'),
+    layers.Dense(32, activation='relu'),
+    layers.Dense(1)
 ])
 
-# Step 8: Compile the model with a lower learning rate and Adam optimizer
-model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001), 
-              loss='mean_squared_error', 
-              metrics=['mae'])
+model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001), loss='mse', metrics=['mae'])
 
-# Step 9: Train the model
+# Train the model
 history = model.fit(X_train, y_train, epochs=50, batch_size=32, validation_data=(X_test, y_test))
 
-# Step 10: Evaluate the model on the test set
+# Evaluate
 test_loss, test_mae = model.evaluate(X_test, y_test)
-print(f"Test Mean Absolute Error: {test_mae}")
+print(f"Test MAE: {test_mae}")
 
-# Save the model
+# Save model
 model.save('interference_model.h5')

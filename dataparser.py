@@ -24,7 +24,11 @@ with open('channel_data_with_interference.csv', mode='w', newline='') as csv_fil
     for match in matches:
         # Calculate interference (Ch_load * (1 / (abs(minsnr) + epsilon)))
         epsilon = 1e-6  # Small value to prevent division by zero
-        interference = float(match[6]) * (1 / (abs(int(match[3])) + epsilon))
+        bss = int(match[2])
+        minsnr = int(match[3])
+        ch_load = int(match[6])
+
+        interference = ch_load * (bss + 1) / max(1, 100 - minsnr)  
 
         # Write the data with calculated interference
         writer.writerow({
