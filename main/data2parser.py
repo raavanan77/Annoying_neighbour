@@ -1,61 +1,123 @@
-import csv
 import re
+import csv
+from collections import defaultdict
 
-def parser(text):
-    noise = re.compile(r"noise:\s*(-?\d+) dBm")
-    rssi = re.compile(r"signal:\s*(-?\d+\.\d+) dBm")
-    nfreq = re.compile(r"frequency:\s+(\d+)\s+MHz")
-    freq = re.compile(r"freq:\s*(\d+\.\d+)")
-    ssid = re.compile(r"SSID:\s*(\S+)")
-    cat = re.compile(r"channel\s+active\s+time:\s*(\d+) ms\s")
-    cbt = re.compile(r"channel\s+busy\s+time:\s*(\d+) ms\s")
-    ctt = re.compile(r"channel\s+transmit\s+time:\s*(\d+) ms")
-    stac = re.compile(r"station\s+count:\s*(\d+)")
-    bss = re.compile(r"BSS\s+([A-Za-z0-9]+(:[A-Za-z0-9]+)+)")
+# File paths
+wifi_scan_file = "/home/big_daddy/imoff/data/data.txt"
+survey_data_file = "/home/big_daddy/imoff/data/sdata.txt"
+output_file = "/home/big_daddy/imoff/dataset/wifi_data.csv"
 
-    NOISE = noise.findall(text)
-    NFREQ = nfreq.findall(text)
-    RSSI = rssi.findall(text)
-    FREQ = freq.findall(text)
-    SSID = ssid.findall(text)
-    CAT = cat.findall(text)
-    CBT = cbt.findall(text)
-    CTT = ctt.findall(text)
-    STAC = stac.findall(text)
-    BSS = bss.findall(text)
+# Regex patterns for different frequency formats
+wifi_freq_pattern = re.compile(r"freq:\s*(\d+\.\d+)")
+survey_freq_pattern = re.compile(r"frequency:\s*(\d+)\s*MHz")
 
-    FREQ = list({int(float(x)) for x in FREQ})
-    NFREQ = list(set(NFREQ))
-    SSID, RSSI = list(set(SSID)), list(set(RSSI))
-    Channl_load = [((int(y)+int(z)) / (int(x) + 1e-16)) * 100 for x,y,z in zip(CAT,CBT,CTT)]
-    SNR = [float(x) - float(y) for x,y in zip(RSSI,NOISE)]
+signal_pattern = re.compile(r"signal:\s*(-?\d+\.\d+)")
+ssid_pattern = re.compile(r"SSID:\s*(.+)")
+channel_pattern = re.compile(r"\* primary channel:\s*(\d+)")
+noise_pattern = re.compile(r"noise:\s*(-?\d+)")
+busy_pattern = re.compile(r"channel busy time:\s*(\d+)")
+active_pattern = re.compile(r"channel active time:\s*(\d+)")
+transmit_pattern = re.compile(r"channel transmit time:\s*(\d+)")
 
+# Parse WiFi scan data (data2.txt) - Store multiple SSIDs per frequency
+wifi_data = defaultdict(list)
 
-    with open('/home/big_daddy/imoff/dataset/channel_data_with_interference.csv', mode='w', newline='') as csv_file:
-        fieldnames = ['Frequency', 'SNR', 'RSSI', 'Neighbours', 'Ch_load', 'Interference']
-        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-        writer.writeheader()
-        for i in range(len(FREQ)):
-            for j in range(len(NFREQ)):
-                print(FREQ[i], NFREQ[j], type(FREQ[i]),type(NFREQ[j]))
-                if FREQ[i] == int(NFREQ[j]):
-                    frequency = int(float(FREQ[i]))
-                    signal = int(float(RSSI[i]))
-                    Neighbour = FREQ.count(FREQ[i])
-                    snr = int(float(SNR[i]))
-                    writer.writerow({
-                        'Frequency': frequency,
-                        'SNR': snr,
-                        'RSSI':signal,
-                        'Neighbours':Neighbour,
-                        'Ch_load': Channl_load[j],
-                        'Interference': ((Channl_load[j] + Neighbour) / max(1,100 - snr)) *100
-                    })
-            pass    
+with open(wifi_scan_file, "r") as file:
+    current_entry = {"Frequency": None, "RSSI": None, "Channel": None, "SSID": None}
+    for line in file:
+        freq_match = wifi_freq_pattern.search(line)
+        signal_match = signal_pattern.search(line)
+        ssid_match = ssid_pattern.search(line)
+        channel_match = channel_pattern.search(line)
 
-with open('/home/big_daddy/imoff/data/data3.txt','r') as file:
-    data = file.read()
+        if freq_match:
+            if current_entry["Frequency"]:  
+                wifi_data[current_entry["Frequency"]].append(current_entry)  # Save the last AP before starting a new one
+            current_entry = {"Frequency": int(float(freq_match.group(1))), "RSSI": None, "Channel": None, "SSID": None}
 
-parser(data)
+        if signal_match:
+            current_entry["RSSI"] = float(signal_match.group(1))
 
+        if ssid_match:
+            ssid = ssid_match.group(1).strip()
+            if current_entry["SSID"]:  
+                # If SSID already exists, create a new entry for this frequency
+                wifi_data[current_entry["Frequency"]].append(current_entry.copy())
+                current_entry["RSSI"] = None  # Reset RSSI for new SSID
+            current_entry["SSID"] = ssid
 
+        if channel_match:
+            current_entry["Channel"] = int(channel_match.group(1))
+
+    if current_entry["Frequency"]:  
+        wifi_data[current_entry["Frequency"]].append(current_entry)  # Save last entry
+
+# Calculate BSS (Number of SSIDs per Frequency)
+bss_count = {freq: len(wifi_data[freq]) for freq in wifi_data}  # Count SSIDs at each frequency
+
+for freq in wifi_data:
+    for entry in wifi_data[freq]:
+        entry["BSS"] = bss_count[freq]  # Assign BSS count to all SSIDs at the same frequency
+
+# Parse survey data (sdata.txt) - Keep unique frequency records
+survey_data = {}
+with open(survey_data_file, "r") as file:
+    current_freq = None
+    for line in file:
+        freq_match = survey_freq_pattern.search(line)
+        noise_match = noise_pattern.search(line)
+        busy_match = busy_pattern.search(line)
+        active_match = active_pattern.search(line)
+        transmit_match = transmit_pattern.search(line)
+
+        if freq_match:
+            current_freq = int(freq_match.group(1))
+            if current_freq not in survey_data:
+                survey_data[current_freq] = {"Frequency": current_freq, "NF": None, "Channel Load": 0}
+
+        if noise_match:
+            survey_data[current_freq]["NF"] = int(noise_match.group(1))
+
+        if busy_match:
+            survey_data[current_freq]["Busy"] = int(busy_match.group(1))
+
+        if active_match:
+            survey_data[current_freq]["Active"] = int(active_match.group(1))
+
+        if transmit_match:
+            survey_data[current_freq]["Transmit"] = int(transmit_match.group(1))
+
+# Merge datasets - Keep multiple SSIDs per frequency
+final_data = []
+for freq in wifi_data:
+    if freq in survey_data:
+        for entry in wifi_data[freq]:
+            rssi = entry.get("RSSI", None)
+            nf = survey_data[freq].get("NF", None)
+            channel_load = ((survey_data[freq].get("Busy", 0) + survey_data[freq].get("Transmit", 0)) / survey_data[freq].get("Active", 0) * 100) if survey_data[freq].get("Active", 0) > 0 else 0
+
+            bss = entry.get("BSS", 0)
+
+            # Compute SNR & Interference
+            snr = (rssi - nf) if (rssi is not None and nf is not None) else None
+            interference = (channel_load * bss) / max(snr, 1) if snr is not None else None
+
+            final_data.append({
+                "Frequency": freq,
+                "RSSI": rssi,
+                "SNR": snr,
+                "Channel": entry.get("Channel", None),
+                "BSS": bss,
+                "NF": nf,
+                "Ch_load": channel_load,
+                "Interference": interference
+            })
+
+# Save to CSV
+with open(output_file, "w", newline="") as csvfile:
+    fieldnames = ["Frequency", "RSSI", "SNR", "Channel", "BSS", "NF", "Ch_load", "Interference"]
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    writer.writeheader()
+    writer.writerows(final_data)
+
+print(f"✅ WiFi data parsed and saved to {output_file}")

@@ -1,0 +1,286 @@
+root@ipq53xx64-rdk-broadband:/# iw dev ath2 survey dump                                                                                                                                                              
+Survey data from ath2
+        frequency:                      2412 MHz [in use]
+        noise:                          -71 dBm
+        channel active time:            104 ms
+        channel busy time:              104 ms
+        channel transmit time:          10 ms
+Survey data from ath2
+        frequency:                      2417 MHz
+        noise:                          -89 dBm
+        channel active time:            105 ms
+        channel busy time:              101 ms
+        channel transmit time:          1 ms
+Survey data from ath2
+        frequency:                      2422 MHz
+        noise:                          0 dBm
+        channel active time:            105 ms
+        channel busy time:              102 ms
+        channel transmit time:          1 ms
+Survey data from ath2
+        frequency:                      2427 MHz
+        noise:                          -54 dBm
+        channel active time:            105 ms
+        channel busy time:              93 ms
+        channel transmit time:          1 ms
+Survey data from ath2
+        frequency:                      2432 MHz
+        noise:                          -82 dBm
+        channel active time:            105 ms
+        channel busy time:              61 ms
+        channel transmit time:          1 ms
+Survey data from ath2
+        frequency:                      2437 MHz
+        noise:                          -74 dBm
+        channel active time:            105 ms
+        channel busy time:              65 ms
+        channel transmit time:          3 ms
+Survey data from ath2
+        frequency:                      2442 MHz
+        noise:                          -78 dBm
+        channel active time:            105 ms
+        channel busy time:              62 ms
+        channel transmit time:          1 ms
+Survey data from ath2
+        frequency:                      2447 MHz
+        noise:                          -84 dBm
+        channel active time:            105 ms
+        channel busy time:              87 ms
+        channel transmit time:          2 ms
+Survey data from ath2
+        frequency:                      2452 MHz
+        noise:                          -84 dBm
+        channel active time:            105 ms
+        channel busy time:              67 ms
+        channel transmit time:          1 ms
+Survey data from ath2
+        frequency:                      2457 MHz
+        noise:                          -79 dBm
+        channel active time:            105 ms
+        channel busy time:              77 ms
+        channel transmit time:          1 ms
+Survey data from ath2
+        frequency:                      2462 MHz
+        noise:                          -88 dBm
+        channel active time:            105 ms
+        channel busy time:              69 ms
+        channel transmit time:          2 ms
+root@ipq53xx64-rdk-broadband:/# iw dev ath1 survey dump                                                                                                                                                              
+Survey data from ath1
+        frequency:                      5180 MHz [in use]
+        noise:                          -107 dBm
+        channel active time:            105 ms
+        channel busy time:              87 ms
+        channel transmit time:          4 ms
+Survey data from ath1
+        frequency:                      5200 MHz
+        noise:                          -97 dBm
+        channel active time:            105 ms
+        channel busy time:              7 ms
+        channel transmit time:          0 ms
+Survey data from ath1
+        frequency:                      5220 MHz
+        noise:                          -106 dBm
+        channel active time:            104 ms
+        channel busy time:              4 ms
+        channel transmit time:          0 ms
+Survey data from ath1
+        frequency:                      5240 MHz
+        noise:                          -105 dBm
+        channel active time:            105 ms
+        channel busy time:              22 ms
+        channel transmit time:          0 ms
+Survey data from ath1
+        frequency:                      5260 MHz
+        noise:                          -106 dBm
+        channel active time:            299 ms
+        channel busy time:              9 ms
+        channel transmit time:          0 ms
+Survey data from ath1
+        frequency:                      5280 MHz
+        noise:                          -97 dBm
+        channel active time:            299 ms
+        channel busy time:              10 ms
+        channel transmit time:          0 ms
+Survey data from ath1
+        frequency:                      5300 MHz
+        noise:                          -98 dBm
+        channel active time:            299 ms
+        channel busy time:              8 ms
+        channel transmit time:          0 ms
+Survey data from ath1
+        frequency:                      5320 MHz
+        noise:                          -97 dBm
+        channel active time:            300 ms
+        channel busy time:              20 ms
+        channel transmit time:          0 ms
+Survey data from ath1
+        frequency:                      5500 MHz
+        noise:                          -97 dBm
+        channel active time:            299 ms
+        channel busy time:              3 ms
+        channel transmit time:          0 ms
+Survey data from ath1
+        frequency:                      5520 MHz
+        noise:                          -105 dBm
+        channel active time:            299 ms
+        channel busy time:              1 ms
+        channel transmit time:          0 ms
+Survey data from ath1
+        frequency:                      5540 MHz
+        noise:                          -106 dBm
+        channel active time:            299 ms
+        channel busy time:              0 ms
+        channel transmit time:          0 ms
+Survey data from ath1
+        frequency:                      5560 MHz
+        noise:                          -97 dBm
+        channel active time:            299 ms
+        channel busy time:              0 ms
+        channel transmit time:          0 ms
+Survey data from ath1
+        frequency:                      5580 MHz
+        noise:                          -97 dBm
+        channel active time:            299 ms
+        channel busy time:              0 ms
+        channel transmit time:          0 ms
+Survey data from ath1
+        frequency:                      5600 MHz
+        noise:                          -96 dBm
+        channel active time:            299 ms
+        channel busy time:              0 ms
+        channel transmit time:          0 ms
+Survey data from ath1
+        frequency:                      5620 MHz
+        noise:                          -98 dBm
+        channel active time:            299 ms
+        channel busy time:              0 ms
+        channel transmit time:          0 ms
+Survey data from ath1
+        frequency:                      5640 MHz
+        noise:                          -98 dBm
+        channel active time:            299 ms
+        channel busy time:              0 ms
+        channel transmit time:          0 ms
+Survey data from ath1
+        frequency:                      5660 MHz
+        noise:                          -106 dBm
+        channel active time:            300 ms
+        channel busy time:              43 ms
+        channel transmit time:          0 ms
+Survey data from ath1
+        frequency:                      5680 MHz
+        noise:                          -98 dBm
+        channel active time:            299 ms
+        channel busy time:              0 ms
+        channel transmit time:          0 ms
+Survey data from ath1
+        frequency:                      5700 MHz
+        noise:                          -98 dBm
+        channel active time:            299 ms
+        channel busy time:              0 ms
+        channel transmit time:          0 ms
+Survey data from ath1
+        frequency:                      5720 MHz
+        noise:                          -95 dBm
+        channel active time:            299 ms
+        channel busy time:              0 ms
+        channel transmit time:          0 ms
+Survey data from ath1
+        frequency:                      5745 MHz
+        noise:                          -92 dBm
+        channel active time:            104 ms
+        channel busy time:              0 ms
+        channel transmit time:          0 ms
+Survey data from ath1
+        frequency:                      5765 MHz
+        noise:                          -96 dBm
+        channel active time:            104 ms
+        channel busy time:              4 ms
+        channel transmit time:          0 ms
+Survey data from ath1
+        frequency:                      5785 MHz
+        noise:                          -97 dBm
+        channel active time:            105 ms
+        channel busy time:              0 ms
+        channel transmit time:          0 ms
+Survey data from ath1
+        frequency:                      5805 MHz
+        noise:                          -96 dBm
+        channel active time:            104 ms
+        channel busy time:              0 ms
+        channel transmit time:          0 ms
+Survey data from ath1
+        frequency:                      5825 MHz
+        noise:                          -106 dBm
+        channel active time:            104 ms
+        channel busy time:              10 ms
+        channel transmit time:          0 ms
+root@ipq53xx64-rdk-broadband:/# iw dev ath0 survey dump                                                                                                                                                              
+Survey data from ath0
+        frequency:                      2412 MHz [in use]
+        noise:                          -71 dBm
+        channel active time:            104 ms
+        channel busy time:              104 ms
+        channel transmit time:          10 ms
+Survey data from ath0
+        frequency:                      2417 MHz
+        noise:                          -89 dBm
+        channel active time:            105 ms
+        channel busy time:              101 ms
+        channel transmit time:          1 ms
+Survey data from ath0
+        frequency:                      2422 MHz
+        noise:                          0 dBm
+        channel active time:            105 ms
+        channel busy time:              102 ms
+        channel transmit time:          1 ms
+Survey data from ath0
+        frequency:                      2427 MHz
+        noise:                          -54 dBm
+        channel active time:            105 ms
+        channel busy time:              93 ms
+        channel transmit time:          1 ms
+Survey data from ath0
+        frequency:                      2432 MHz
+        noise:                          -82 dBm
+        channel active time:            105 ms
+        channel busy time:              61 ms
+        channel transmit time:          1 ms
+Survey data from ath0
+        frequency:                      2437 MHz
+        noise:                          -74 dBm
+        channel active time:            105 ms
+        channel busy time:              65 ms
+        channel transmit time:          3 ms
+Survey data from ath0
+        frequency:                      2442 MHz
+        noise:                          -78 dBm
+        channel active time:            105 ms
+        channel busy time:              62 ms
+        channel transmit time:          1 ms
+Survey data from ath0
+        frequency:                      2447 MHz
+        noise:                          -84 dBm
+        channel active time:            105 ms
+        channel busy time:              87 ms
+        channel transmit time:          2 ms
+Survey data from ath0
+        frequency:                      2452 MHz
+        noise:                          -84 dBm
+        channel active time:            105 ms
+        channel busy time:              67 ms
+        channel transmit time:          1 ms
+Survey data from ath0
+        frequency:                      2457 MHz
+        noise:                          -79 dBm
+        channel active time:            105 ms
+        channel busy time:              77 ms
+        channel transmit time:          1 ms
+Survey data from ath0
+        frequency:                      2462 MHz
+        noise:                          -88 dBm
+        channel active time:            105 ms
+        channel busy time:              69 ms
+        channel transmit time:          2 ms
+root@ipq53xx64-rdk-broadband:/# 
